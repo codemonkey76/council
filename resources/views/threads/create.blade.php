@@ -40,7 +40,7 @@
                                 <div class="valid-feedback">Body is good.</div>
                             </div>
                             <div class="form-group">
-                                <div class="g-recaptcha" data-sitekey="6LdB3XIUAAAAAGvqW4GKb0_AWyEwLw3XX2dw_Owv"></div>
+                                <div class="g-recaptcha" data-sitekey="{{ config('council.recaptcha.key') }}"></div>
                             </div>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Publish</button>
