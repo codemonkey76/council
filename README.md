@@ -14,6 +14,7 @@ Begin by cloning this repository to your machine and installing all composer dep
 git clone git@github.com:codemonkey76/council.git
 cd council && composer install
 php artisan key:generate
+mv .env.example .env
 ```
 
 ### Step 2.

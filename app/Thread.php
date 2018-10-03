@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
 use Stevebauman\Purify\Facades\Purify;
 
-class Thread extends Model
-{
+class Thread extends Model {
+
     use RecordsActivity, Searchable;
 
     protected $guarded = [];
@@ -31,7 +31,9 @@ class Thread extends Model
         });
 
         static::created(function ($thread) {
-           $thread->update(['slug'=>$thread->title]);
+            $thread->update(['slug' => $thread->title]);
+
+            Reputation::award($thread->creator, Reputation::THREAD_WAS_PUBLISHED);
         });
 
     }
@@ -75,7 +77,7 @@ class Thread extends Model
     public function addReply($reply)
     {
         $reply = $this->replies()
-                      ->create($reply);
+            ->create($reply);
 
         event(new ThreadReceivedNewReply($reply));
 
@@ -104,8 +106,8 @@ class Thread extends Model
     public function unsubscribe($userId = null)
     {
         $this->subscriptions()
-             ->where('user_id', $userId ?: auth()->id())
-             ->delete();
+            ->where('user_id', $userId ?: auth()->id())
+            ->delete();
     }
 
     public function subscriptions()
@@ -116,8 +118,8 @@ class Thread extends Model
     public function getIsSubscribedToAttribute()
     {
         return $this->subscriptions()
-                    ->where('user_id', auth()->id())
-                    ->exists();
+            ->where('user_id', auth()->id())
+            ->exists();
     }
 
     public function hasUpdatesFor($user)
@@ -132,9 +134,10 @@ class Thread extends Model
 
     public function setSlugAttribute($value)
     {
-        $slug     = str_slug($value);
+        $slug = str_slug($value);
 
-        if (static::whereSlug($slug)->exists()) {
+        if (static::whereSlug($slug)->exists())
+        {
             $slug = "{$slug}-" . $this->id;
         }
 
@@ -148,7 +151,8 @@ class Thread extends Model
 
     public function markBestReply(Reply $reply)
     {
-        $this->update(['best_reply_id'=>$reply->id]);
+        $this->update(['best_reply_id' => $reply->id]);
+        Reputation::award($reply->owner, Reputation::BEST_REPLY_AWARDED);
     }
 
     public function toSearchableArray()
