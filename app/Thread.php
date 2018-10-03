@@ -28,6 +28,8 @@ class Thread extends Model {
 
         static::deleting(function ($thread) {
             $thread->replies->each->delete();
+
+            Reputation::revoke($thread->creator, Reputation::THREAD_WAS_PUBLISHED);
         });
 
         static::created(function ($thread) {
@@ -151,6 +153,12 @@ class Thread extends Model {
 
     public function markBestReply(Reply $reply)
     {
+        $currentBest = Reply::find($this['best_reply_id']);
+        if ($currentBest)
+        {
+            Reputation::revoke($currentBest->owner, Reputation::BEST_REPLY_AWARDED);
+        }
+        
         $this->update(['best_reply_id' => $reply->id]);
         Reputation::award($reply->owner, Reputation::BEST_REPLY_AWARDED);
     }
