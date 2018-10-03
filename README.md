@@ -1,3 +1,5 @@
-Following on with the laracasts tutorial "Let's Build A Forum with Laravel and TDD"
+# Council
 
-https://laracasts.com/series/lets-build-a-forum-with-laravel
+This is an open source forum that was built and maintained at Laracasts.com
+
+TODO
